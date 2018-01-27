@@ -1,16 +1,21 @@
 import os,datetime
 
-Version = "v2.01b (28-Jan-18)"
+Version = "v4.01b (28-Jan-18)"
 
 now = datetime.datetime.now()
 get_date = now.strftime("%d-%m-%Y")
 
 Base_File_name = os.path.basename(__file__)
 
-OutPut_File_Name = "Directory Listing [%s].txt" %get_date
-OutPut_vFile_Name = "Video Files Listing [%s].txt" %get_date
+Root_Dir = os.getcwd()
 
-## Changes Bytes to Human readable Format ########
+OutPut_iFile_Name = "Image Files Listing [%s].txt" %get_date
+OutPut_File_Name = "Directory Listing [%s].txt" %get_date
+OutPut_Tree_Name = "Directory Tree Listing [%s].txt" %get_date
+OutPut_vFile_Name = "Video Files Listing [%s].txt" %get_date
+OutPut_mFile_Name = "Music Files Listing [%s].txt" %get_date
+
+###         Function 1 : Changes Bytes to Human readable Format             ###
 
 def sizeof_fmt(num, suffix='B'):
     for unit in [' ',' K',' M',' G','T',' P',' E',' Z']:
@@ -18,10 +23,10 @@ def sizeof_fmt(num, suffix='B'):
             return "%3.2f%s%s" % (num, unit, suffix)
         num /= 1024.0
     return "%.2f%s %s" % (num, 'Yi', suffix)
-## ------------------------------------------ #####
+## -----------------------      Function 1 Ends     ----------------------- ###
 
 
-### Get Directory Size Inc. Subdirectories Size #####
+### Function 2 : Get Directory Including Sub Dir + Size With Subd+Files Count #####
 def get_size(start_path):
     total_size = 0
     count_subd = -1
@@ -34,39 +39,83 @@ def get_size(start_path):
             total_size += os.path.getsize(fp)
     return total_size,count_subd,count_files
 
-## -------------------------------------------- ######
+###     ------------------        Function 2 Ends          ------------------    ###    
 
 
+##      Function 3 : Find Images from Root Directory Show in Tree   ##
 
-### ############# ##################         ###########
-print "\nShowY Directory Lister %s" %Version
-print "Support Email : me@showy.pro"
-print "Works best with ASCII Char. Names\n\n\n"
-print "Please choose appropriate Options :-\n"
-print "1). Listing with Sub Dir,Files,Size"
-print "2). Listing with Size"
-print "3). Listing only names"
-print "4). Listing Video Files Only With Size"
-get_ans = raw_input ("Answer [Ex. 1] : ")
-what_to_do = 0
+def Tree_Find_Images():
+    Dir_ImageTree = ''
+    Total_F_Found = 0
+    Total_F_Size = 0
 
-if get_ans == '1' :
-    print "\nListing with Sub Dir., Files,Size\n"
-    what_to_do = 1
-elif get_ans == '2' :
-    print "\nListing with Size\n"
-    what_to_do = 2
-elif get_ans == '3' :
-    print "\nListing only names\n"
-    what_to_do = 3
-elif get_ans == '4':
-    print "\nListing Video Files Only With Size\n"
-    what_to_do = 4
-else :
-    print "\nWrong Option selected : Reverting to Option 1st"
-    what_to_do = 1
+    for dirName, subdirList, fileList in os.walk(unicode(Root_Dir)):
+        T_DirTree_FCount = 0
+        Dir_ImageTree = "%s\nDirectory : %s\n" %(Dir_ImageTree,dirName)
+        T_Tree_size = 0
+        for fname in fileList:
+            if fname.endswith(('.bmp', '.gif','.img','.jpe','.jpeg','.jpg','.pcd','.png','.psd','.tiff','.raw','.svg','.ico')) == True:
+            ## Size Thingy in Tree
+                Total_F_Found += 1
+                fp = os.path.join(dirName, fname)
+                T_Tree_size += os.path.getsize(fp)
+                Total_F_Size += os.path.getsize(fp)
+            ## Ends Here
+                Dir_ImageTree = "%s\n\t-> %s [%s]" %(Dir_ImageTree,fname,sizeof_fmt(os.path.getsize(fp)))
+                T_DirTree_FCount += 1
+        if T_DirTree_FCount == 0:
+            Dir_ImageTree = Dir_ImageTree.replace("\nDirectory : %s\n" %dirName,'')
+        else :
+            Dir_ImageTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_ImageTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
+
+
+    print Dir_ImageTree
+    print "\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(Total_F_Found,sizeof_fmt(Total_F_Size))
+    OutTreefile = open(OutPut_iFile_Name ,"w")
+    OutTreefile.write(Dir_ImageTree.encode('utf-8'))
+    OutTreefile.write("\n\n***\t\t\tTotal Image Files Found : %d | %s\t\t\t***\n" %(Total_F_Found,sizeof_fmt(Total_F_Size)))
+    OutTreefile.close()
+
+##    ----------------------- Fucntion 3 Ends ------------------------      ##
+
+##      Function 4 : Print Directory Tree Inc. SubD + Files + Size Total + Files Size  ##
+
+def Tree_Dir():
+    Dir_Tree = ''
+    Dir_Count = 0
+    All_Dir_Count = 0
+    All_Dir_Size = 0
+    for dirName, subdirList, fileList in os.walk(unicode(Root_Dir)):
+        Dir_Count += 1
+        T_DirTree_FCount = 0
+        Dir_Tree = "%s\n%d.Directory : %s\n" %(Dir_Tree,Dir_Count,dirName)
+        T_Tree_size = 0
+        for fname in fileList:
+            ## Size Thingy in Tree
+            fp = os.path.join(dirName, fname)
+            T_Tree_size += os.path.getsize(fp)
+            ## Ends Here
+            Dir_Tree = "%s\n\t-> %s [%s]" %(Dir_Tree,fname,sizeof_fmt(os.path.getsize(fp)))
+            T_DirTree_FCount += 1 #Counts Only Files inside Dir
+        # Get All Directory+SubD Count & Size
+        All_Dir_Count += T_DirTree_FCount
+        All_Dir_Size += T_Tree_size
+        # Ends Here
+        Dir_Tree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_Tree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
+    #print(soup.encode("utf-8"))
+    print Dir_Tree
+    print "\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(All_Dir_Count,sizeof_fmt(All_Dir_Size))
+    OutTreefile = open(OutPut_Tree_Name ,"w")
+    # f.write(foo.encode('utf8'))
+    OutTreefile.write(Dir_Tree.encode('utf-8'))
+    OutTreefile.write("\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(All_Dir_Count,sizeof_fmt(All_Dir_Size)))
+    OutTreefile.close()
     
-if get_ans == '1' or get_ans == '2' or get_ans == '3':
+##    ----------------------- Fucntion 4 Ends ------------------------      ##
+
+##      Function 5 : Print Directory + File + Size [Options 1,2,3] ##   ##
+
+def List_Dir_w_Size(what_to_do):
     Total_F_D = 0
     get_file = ''
     get_dir = ''
@@ -119,27 +168,126 @@ if get_ans == '1' or get_ans == '2' or get_ans == '3':
     Outfile.write(get_file)
     Outfile.write("\n\nTotal Files and Folders : %d" %Total_F_D)
     Outfile.close()
+##    ----------------------- Fucntion 5 Ends ------------------------      ##
+
+##      Function 6 : Find Video Files inside Root Dir Shows in a Tree Format inc. Size ##   ##
+def Tree_Find_Videos():
+    Dir_VideoTree = ''
+    Total_F_Found = 0
+    Total_F_Size = 0
+
+    for dirName, subdirList, fileList in os.walk(unicode(Root_Dir)):
+        T_DirTree_FCount = 0
+        Dir_VideoTree = "%s\nDirectory : %s\n" %(Dir_VideoTree,dirName)
+        T_Tree_size = 0
+        for fname in fileList:
+            if fname.endswith(('.mkv', '.mp4','.webm','.flv','.vob','.ogg','.avi','.mov','.wmv','.rm','.mpeg','m4v','.3gp')) == True:
+            ## Size Thingy in Tree
+                Total_F_Found += 1
+                fp = os.path.join(dirName, fname)
+                T_Tree_size += os.path.getsize(fp)
+                Total_F_Size += os.path.getsize(fp)
+            ## Ends Here
+                Dir_VideoTree = "%s\n\t-> %s [%s]" %(Dir_VideoTree,fname,sizeof_fmt(os.path.getsize(fp)))
+                T_DirTree_FCount += 1
+        if T_DirTree_FCount == 0:
+            Dir_VideoTree = Dir_VideoTree.replace("\nDirectory : %s\n" %dirName,'')
+        else :
+            Dir_VideoTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_VideoTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
+
+
+    print Dir_VideoTree
+    print "\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(Total_F_Found,sizeof_fmt(Total_F_Size))
+    OutTreefile = open(OutPut_vFile_Name ,"w")
+    OutTreefile.write(Dir_VideoTree.encode('utf-8'))
+    OutTreefile.write("\n\n***\t\t\tTotal Video Files Found : %d | %s\t\t\t***\n" %(Total_F_Found,sizeof_fmt(Total_F_Size)))
+    OutTreefile.close()
+
+##    ----------------------- Fucntion 6 Ends ------------------------      ##
+
+##      Function 7 : Find Music Files inside Root Dir Shows in a Tree Format inc. Size ##   ##
+def Tree_Find_Music():
+    Dir_MusicTree = ''
+    Total_F_Found = 0
+    Total_F_Size = 0
+
+    for dirName, subdirList, fileList in os.walk(unicode(Root_Dir)):
+        T_DirTree_FCount = 0
+        Dir_MusicTree = "%s\nDirectory : %s\n" %(Dir_MusicTree,dirName)
+        T_Tree_size = 0
+        for fname in fileList:
+            if fname.endswith(('.aac', '.flac', '.m4p', '.mp3', '.ogg', '.wav','.pcm','.aiff','.wma')) == True:
+            ## Size Thingy in Tree
+                Total_F_Found += 1
+                fp = os.path.join(dirName, fname)
+                T_Tree_size += os.path.getsize(fp)
+                Total_F_Size += os.path.getsize(fp)
+            ## Ends Here
+                Dir_MusicTree = "%s\n\t-> %s [%s]" %(Dir_MusicTree,fname,sizeof_fmt(os.path.getsize(fp)))
+                T_DirTree_FCount += 1
+        if T_DirTree_FCount == 0:
+            Dir_MusicTree = Dir_MusicTree.replace("\nDirectory : %s\n" %dirName,'')
+        else :
+            Dir_MusicTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_MusicTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
+
+
+    print Dir_MusicTree
+    print "\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(Total_F_Found,sizeof_fmt(Total_F_Size))
+    OutTreefile = open(OutPut_mFile_Name ,"w")
+    OutTreefile.write(Dir_MusicTree.encode('utf-8'))
+    OutTreefile.write("\n\n***\t\t\tTotal Music Files Found : %d | %s\t\t\t***\n" %(Total_F_Found,sizeof_fmt(Total_F_Size)))
+    OutTreefile.close()
+
+##    ----------------------- Fucntion 7 Ends ------------------------      ##
+
+
+#########################################################################################
+######################           Main Program Starts Here      ##########################
+#########################################################################################
+print "\nShowY Directory Lister %s" %Version
+print "Support Email : me@showy.pro"
+print "Works best with ASCII Char. Names\n\n\n"
+
+# Menu
+print "Please choose appropriate Options :-\n"
+print "1). Listing with Sub Dir,Files,Size"
+print "2). Listing with Size"
+print "3). Listing only names"
+print "4). List Video Files With Size"
+print "5). List Images Files with Size"
+print "6). List Music Files with Size"
+print "7). List Directory Tree with Files + Size"
+
+#Get Input
+get_ans = raw_input ("Answer [Ex. 1] : ")
+
+#Set to prevent errors
+what_to_do = 1
+
+if get_ans == '1' :
+    print "\nListing with Sub Dir., Files,Size\n\n"
+    List_Dir_w_Size(1)
+elif get_ans == '2' :
+    print "\nListing with Size\n\n"
+    List_Dir_w_Size(2)
+elif get_ans == '3' :
+    print "\nListing only names\n\n"
+    List_Dir_w_Size(3)
 elif get_ans == '4':
-    ## Program Starts Here
-    List_Video = ''
-    count_vfiles = 0
-    for dirpath, dirnames, filenames in os.walk('.'):
-        for f in filenames:
-            if f.endswith(('.mkv', '.mp4','.webm','.flv','.vob','.ogg','.avi','.mov','.wmv','.rm','.mpeg','m4v','.3gp')) == True:
-                count_vfiles += 1
-                fp = os.path.join(dirpath, f)
-                f_size = os.path.getsize(fp)
-                f_size = sizeof_fmt(f_size)
-                List_Video = "%s\n%d. %s (%s)" %(List_Video,count_vfiles,f,f_size)
-    ## Print and Save O/p
-    print "\n\nVideo Files Found :-\n\n"
-    print List_Video
-    print "Total Video Files : %d" %count_vfiles
-    Outvfile = open(OutPut_vFile_Name,"w")
-    Outvfile.write("\n\nVideo Files Found :-\n\n")
-    Outvfile.write(List_Video)
-    Outvfile.write("Total Video Files : %d" %count_vfiles)
-    Outvfile.close()
+    print "\nListing Video Files Only With Size\n\n"
+    Tree_Find_Videos()
+elif get_ans == '5':
+    print "\nListing Image Files With Size \n"
+    Tree_Find_Images()
+elif get_ans == '6':
+    print "\nListing Music Files With Size\n"
+    Tree_Find_Music()
+elif get_ans == '7':
+    print "\nListing Directory Tree w/ Size\n\n"
+    Tree_Dir()
+else :
+    print "\nWrong Option selected : Reverting to Option 1st\n\n"
+    List_Dir_w_Size(1)
     
 raw_input("\n\n###          Press Any Key to exit           ####")
 
