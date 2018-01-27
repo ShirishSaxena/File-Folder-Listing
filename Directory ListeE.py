@@ -1,6 +1,6 @@
 import os,datetime
 
-Version = "v4.2 (29-Jan-18)"
+Version = "v4.3 (29-Jan-18)"
 
 now = datetime.datetime.now()
 get_date = now.strftime("%d-%m-%Y")
@@ -70,7 +70,7 @@ def Tree_Find_Images():
             #Dir_ImageTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_ImageTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
 
 
-    print Dir_ImageTree
+    print Dir_ImageTree.encode("utf-8")
     print "\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(Total_F_Found,sizeof_fmt(Total_F_Size))
     OutTreefile = open(OutPut_iFile_Name ,"w")
     OutTreefile.write(Dir_ImageTree.encode('utf-8'))
@@ -113,7 +113,7 @@ def Tree_Dir():
         Dir_Tree = Dir_Tree.replace("\n%d.Directory : %s\n" %(Dir_Count,dirName),"\n\nDirectory [Files : %d] [%s] : %s\n" %(T_DirTree_FCount,sizeof_fmt(T_Tree_size),dirName))
         #Dir_Tree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_Tree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
     #print(soup.encode("utf-8"))
-    print Dir_Tree
+    print Dir_Tree.encode("utf-8")
     print "\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(All_Dir_Count,sizeof_fmt(All_Dir_Size))
     OutTreefile = open(OutPut_Tree_Name ,"w")
     # f.write(foo.encode('utf8'))
@@ -207,7 +207,7 @@ def Tree_Find_Videos():
             #Dir_VideoTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_VideoTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
 
 
-    print Dir_VideoTree
+    print Dir_VideoTree.encode("utf-8")
     print "\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(Total_F_Found,sizeof_fmt(Total_F_Size))
     OutTreefile = open(OutPut_vFile_Name ,"w")
     OutTreefile.write(Dir_VideoTree.encode('utf-8'))
@@ -243,7 +243,7 @@ def Tree_Find_Music():
             #Dir_MusicTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_MusicTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
 
 
-    print Dir_MusicTree
+    print Dir_MusicTree.encode("utf-8")
     print "\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(Total_F_Found,sizeof_fmt(Total_F_Size))
     OutTreefile = open(OutPut_mFile_Name ,"w")
     OutTreefile.write(Dir_MusicTree.encode('utf-8'))
