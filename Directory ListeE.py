@@ -1,6 +1,6 @@
 import os,datetime
 
-Version = "v4.01b (28-Jan-18)"
+Version = "v4.2 (29-Jan-18)"
 
 now = datetime.datetime.now()
 get_date = now.strftime("%d-%m-%Y")
@@ -66,7 +66,8 @@ def Tree_Find_Images():
         if T_DirTree_FCount == 0:
             Dir_ImageTree = Dir_ImageTree.replace("\nDirectory : %s\n" %dirName,'')
         else :
-            Dir_ImageTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_ImageTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
+            Dir_ImageTree = Dir_ImageTree.replace("\nDirectory : %s\n" %dirName,'\n\nDirectory [Files : %d] [%s] : %s\n' %(T_DirTree_FCount,sizeof_fmt(T_Tree_size),dirName))
+            #Dir_ImageTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_ImageTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
 
 
     print Dir_ImageTree
@@ -98,10 +99,19 @@ def Tree_Dir():
             Dir_Tree = "%s\n\t-> %s [%s]" %(Dir_Tree,fname,sizeof_fmt(os.path.getsize(fp)))
             T_DirTree_FCount += 1 #Counts Only Files inside Dir
         # Get All Directory+SubD Count & Size
+        '''
+       if T_DirTree_FCount == 0:
+            Dir_ImageTree = Dir_ImageTree.replace("\nDirectory : %s\n" %dirName,'')
+        else :
+            Dir_ImageTree = Dir_ImageTree.replace("\nDirectory : %s\n" %dirName,'\n\nDirectory [Files : %d] [%s] : %s\n' %(T_DirTree_FCount,sizeof_fmt(T_Tree_size),dirName))
+            #Dir_ImageTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_ImageTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
+
+        '''
         All_Dir_Count += T_DirTree_FCount
         All_Dir_Size += T_Tree_size
         # Ends Here
-        Dir_Tree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_Tree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
+        Dir_Tree = Dir_Tree.replace("\n%d.Directory : %s\n" %(Dir_Count,dirName),"\n\nDirectory [Files : %d] [%s] : %s\n" %(T_DirTree_FCount,sizeof_fmt(T_Tree_size),dirName))
+        #Dir_Tree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_Tree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
     #print(soup.encode("utf-8"))
     print Dir_Tree
     print "\n\n***\t\t\tTotal Files Found : %d | %s\t\t\t***\n" %(All_Dir_Count,sizeof_fmt(All_Dir_Size))
@@ -193,7 +203,8 @@ def Tree_Find_Videos():
         if T_DirTree_FCount == 0:
             Dir_VideoTree = Dir_VideoTree.replace("\nDirectory : %s\n" %dirName,'')
         else :
-            Dir_VideoTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_VideoTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
+            Dir_VideoTree = Dir_VideoTree.replace("\nDirectory : %s\n" %dirName,'\n\nDirectory [Files : %d] [%s] : %s\n' %(T_DirTree_FCount,sizeof_fmt(T_Tree_size),dirName))
+            #Dir_VideoTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_VideoTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
 
 
     print Dir_VideoTree
@@ -228,7 +239,8 @@ def Tree_Find_Music():
         if T_DirTree_FCount == 0:
             Dir_MusicTree = Dir_MusicTree.replace("\nDirectory : %s\n" %dirName,'')
         else :
-            Dir_MusicTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_MusicTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
+            Dir_MusicTree = Dir_MusicTree.replace("\nDirectory : %s\n" %dirName,'\n\nDirectory [Files : %d] [%s] : %s\n' %(T_DirTree_FCount,sizeof_fmt(T_Tree_size),dirName))
+            #Dir_MusicTree = "%s\n****\t\t\t\tFiles in Dir. : %d | %s\t\t\t\t****\n" %(Dir_MusicTree,T_DirTree_FCount,sizeof_fmt(T_Tree_size))
 
 
     print Dir_MusicTree
