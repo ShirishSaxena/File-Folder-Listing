@@ -1,6 +1,6 @@
 import os,datetime
 
-Version = "v4.3 (29-Jan-18)"
+Version = "v4.4 (29-Jan-18)"
 
 now = datetime.datetime.now()
 get_date = now.strftime("%d-%m-%Y")
@@ -130,6 +130,7 @@ def List_Dir_w_Size(what_to_do):
     get_file = ''
     get_dir = ''
     dir_count=1
+    size_count = 0
     file_count = 1
     for x in os.listdir('.'):
         if os.path.isfile(x):
@@ -137,6 +138,7 @@ def List_Dir_w_Size(what_to_do):
                 Total_F_D += 1
                 if what_to_do == 1 or what_to_do == 2:
                     get_f_size = sizeof_fmt(os.path.getsize(x))
+                    size_count += os.path.getsize(x)
                     get_file = "%s\n%d. %s (%s)" %(get_file,file_count,x,get_f_size)
                 elif what_to_do == 3:
                     get_file = "%s\n%d. %s" %(get_file,file_count,x)
@@ -145,6 +147,7 @@ def List_Dir_w_Size(what_to_do):
             Total_F_D += 1
             if what_to_do == 1:
                 total_size,count_subd,count_files = get_size(x)
+                size_count += total_size
                 total_size = sizeof_fmt(total_size)
                 if count_subd == 0:
                     get_dir = "%s\n%d. %s (%s) | F[%d]" %(get_dir,dir_count,x,total_size,count_files)
@@ -152,6 +155,7 @@ def List_Dir_w_Size(what_to_do):
                     get_dir = "%s\n%d. %s (%s) | D[%d] F[%d]" %(get_dir,dir_count,x,total_size,count_subd,count_files)
             elif what_to_do == 2:
                 total_size,count_subd,count_files = get_size(x)
+                size_count += total_size
                 total_size = sizeof_fmt(total_size)
                 if count_subd == 0:
                     get_dir = "%s\n%d. %s (%s)" %(get_dir,dir_count,x,total_size)
@@ -168,7 +172,7 @@ def List_Dir_w_Size(what_to_do):
     print get_dir
     print "\n\nFiles :- \n\n"
     print get_file
-    print "\n\nTotal Files and Folders : %d\n\n" %Total_F_D
+    print "\n\nTotal Files and Folders : %d | %s\n\n" %(Total_F_D,sizeof_fmt(size_count))
 
     Outfile = open(OutPut_File_Name,"w")
 
