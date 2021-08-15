@@ -1,7 +1,16 @@
 import os,datetime
+import string
+import sys
+import json 
+import urllib2
+import time
 
-Version = "v4.4 (29-Jan-18)"
-
+Version = "v4.5 (01-Oct-19)"
+##########################
+'''
+    Author : Shirish Saxena
+'''
+##########################
 now = datetime.datetime.now()
 get_date = now.strftime("%d-%m-%Y")
 
@@ -180,7 +189,7 @@ def List_Dir_w_Size(what_to_do):
     Outfile.write(get_dir)
     Outfile.write("\n\nFiles :- \n\n")
     Outfile.write(get_file)
-    Outfile.write("\n\nTotal Files and Folders : %d" %Total_F_D)
+    Outfile.write("\n\nTotal Files and Folders : %d | %s\n\n" %(Total_F_D,sizeof_fmt(size_count)))
     Outfile.close()
 ##    ----------------------- Fucntion 5 Ends ------------------------      ##
 
@@ -256,6 +265,34 @@ def Tree_Find_Music():
 
 ##    ----------------------- Fucntion 7 Ends ------------------------      ##
 
+Total_Movies_F=0
+def Get_DataM(IP):
+    global Total_Movies_F
+    IP = IP.replace(' ', '%20')
+    if ',' in IP :
+        IP = IP.replace(',','&y=')
+    api_key = "i=tt3896198&apikey=982073ce"
+    IP=os.path.splitext(IP)[0]
+    url = "http://www.omdbapi.com/?t=%s&%s" %(IP,api_key)   
+    data = json.load(urllib2.urlopen(url))
+    try :
+        Get_Result = '%s (%s) | %s | R : %s (%s)' %(data['Title'],data['Year'],data['Genre'], data['imdbRating'],data['imdbVotes'])
+        #pyperclip.copy(Get_Result)
+        print Get_Result
+        Total_Movies_F += 1
+    except KeyError, e:
+        IP = IP.replace('%20', ' ')
+        #print 'Name Error : %s ' % IP
+    except IndexError, e:
+        print 'Unknown Error : Contact ShowY'
+def Get_Movie_Data():
+    directories = os.listdir(Root_Dir)
+    print '' 
+    print ''
+    for d in directories:
+        Get_DataM(d)
+    print '\n\nTotal Movies Found : %d' %Total_Movies_F
+
 
 #########################################################################################
 ######################           Main Program Starts Here      ##########################
@@ -273,6 +310,7 @@ print "4). List Video Files With Size"
 print "5). List Images Files with Size"
 print "6). List Music Files with Size"
 print "7). List Directory Tree with Files + Size"
+print "8). File Name to Movie Info"
 
 #Get Input
 get_ans = raw_input ("Answer [Ex. 1] : ")
@@ -301,6 +339,9 @@ elif get_ans == '6':
 elif get_ans == '7':
     print "\nListing Directory Tree w/ Size\n\n"
     Tree_Dir()
+elif get_ans == '8':
+    print "\nCollecting data for Files ::: \n\n\n"
+    Get_Movie_Data()
 else :
     print "\nWrong Option selected : Reverting to Option 1st\n\n"
     List_Dir_w_Size(1)
